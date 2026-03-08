@@ -48,12 +48,20 @@ router.route('/notes')
         }
     });
 
-router.get('/notes/:id', async (req, res) => {
+router.get('/notes/:id', verifyFirebaseToken, async (req, res) => {
     try {
         const noteId = req.params.id;
-        const note = await Note.findOne({ id: noteId });
+        const userId = req.user.uid;
+        const User = (await import('../models/user.js')).default;
+        const user = await User.findOne({ firebaseId: userId });
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        const note = await Note.findOne({ _id: noteId, user: user._id });
         if (!note) {
-            return res.status(404).json({ message: 'Note not found' });
+            return res.status(404).json({ message: 'Note not found or access denied' });
         }
         res.json(note);
     } catch (error) {
@@ -61,17 +69,25 @@ router.get('/notes/:id', async (req, res) => {
     }
 });
 
-router.put('/notes/:id', async(req,res)=>{
+router.put('/notes/:id', verifyFirebaseToken, async(req,res)=>{
     try{
         const noteId = req.params.id;
         const { title, content } = req.body;
+        const userId = req.user.uid;
+        const User = (await import('../models/user.js')).default;
+        const user = await User.findOne({ firebaseId: userId });
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
         const updatedNote = await Note.findOneAndUpdate(
-            { id: noteId },
+            { _id: noteId, user: user._id },
             { title, content, updatedAt: Date.now() },
             { new: true }
         );
         if (!updatedNote) {
-            return res.status(404).json({ message: 'Note not found' });
+            return res.status(404).json({ message: 'Note not found or access denied' });
         }
         res.json(updatedNote);
     }catch(error){
@@ -79,13 +95,22 @@ router.put('/notes/:id', async(req,res)=>{
     }
 });
 
-router.delete('/notes/:id', async(req,res)=>{
+router.delete('/notes/:id', verifyFirebaseToken, async(req,res)=>{
     try{
         const noteId = req.params.id;
-        const deletedNote = await Note.findOneAndDelete({ id: noteId });
-        if (!deletedNote) {
-            return res.status(404).json({ message: 'Note not found' });
+        const userId = req.user.uid;
+        const User = (await import('../models/user.js')).default;
+        const user = await User.findOne({ firebaseId: userId });
+        
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
+        
+        const deletedNote = await Note.findOneAndDelete({ _id: noteId, user: user._id });
+        if (!deletedNote) {
+            return res.status(404).json({ message: 'Note not found or access denied' });
+        }
+        res.json({ message: 'Note deleted successfully' });
     }catch(error){
         res.status(500).json({ message: error.message });
     }
