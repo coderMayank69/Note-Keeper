@@ -9,15 +9,19 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 
+dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 const app = express();
-// Enable CORS for frontend origin before any routes or static middleware
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
+// Enable CORS - in production, frontend is served from same origin
+const corsOptions = process.env.NODE_ENV === 'production' 
+  ? { credentials: true } 
+  : { origin: 'http://localhost:5173', credentials: true };
+app.use(cors(corsOptions));
 app.use(express.json());
-dotenv.config();
 
 const dbUrl = process.env.DB_URL;
 mongoose.connect(dbUrl).catch(err => console.error('Mongo connection error:', err));
@@ -46,6 +50,7 @@ app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, './client-build', 'index.html'));
 });
 
-app.listen(5000, () => {
-  console.log('Server is running on http://localhost:3000');
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
