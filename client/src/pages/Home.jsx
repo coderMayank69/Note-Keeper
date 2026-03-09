@@ -22,7 +22,7 @@ const Home = () => {
         'Authorization': `Bearer ${token}`
       };
       console.log('Fetch headers:', headers);
-      await fetch("http://localhost:5000/api/auth/google", {
+      await fetch("/api/auth/google", {
         method: "POST",
         headers
       });

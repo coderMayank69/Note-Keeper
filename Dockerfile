@@ -12,6 +12,15 @@ RUN npm install --legacy-peer-deps
 # Copy client source code
 COPY client/ ./
 
+# Build args for Vite (needed at build time)
+ARG VITE_FIREBASE_API_KEY
+ARG VITE_FIREBASE_AUTH_DOMAIN
+ARG VITE_FIREBASE_PROJECT_ID
+ARG VITE_FIREBASE_STORAGE_BUCKET
+ARG VITE_FIREBASE_MESSAGING_SENDER_ID
+ARG VITE_FIREBASE_APP_ID
+ARG VITE_FIREBASE_MEASUREMENT_ID
+
 # Build the React app
 RUN npm run build
 

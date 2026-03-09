@@ -3,3 +3,8 @@ server/serviceAccountKey.json
 .env.local
 .env.*.local
 node_modules/
+
+# Keep example files
+!.env.example
+!client/.env.example
+!server/.env.example
