@@ -1,16 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Notion-inspired color tokens */
+  --notion-bg: #ffffff;
+  --notion-bg-secondary: #f7f7f5;
+  --notion-bg-hover: #efefef;
+  --notion-border: #e9e9e7;
+  --notion-text: #37352f;
+  --notion-text-secondary: #6b7280;
+  --notion-text-muted: #9b9a97;
+  --notion-accent: #2383e2;
+  --notion-accent-hover: #1a6bc2;
+  --notion-red: #e03e3e;
+  --notion-yellow: #dfab01;
+  --notion-green: #0f7b6c;
+  --notion-sidebar: #f7f7f5;
+  --notion-sidebar-border: #e9e9e7;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  background-color: var(--notion-bg);
+  color: var(--notion-text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Notion-like scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d3d1cb;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b8b6b0;
+}
+
+/* Smooth transitions */
+.notion-transition {
+  transition: all 0.15s ease;
+}
+
+/* Page fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: fadeIn 0.2s ease forwards;
+}
+
+/* Spin animation for loader */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Modal backdrop */
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }

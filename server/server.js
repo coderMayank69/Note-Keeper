@@ -17,8 +17,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Enable CORS - in production, frontend is served from same origin
-const corsOptions = process.env.NODE_ENV === 'production' 
-  ? { credentials: true } 
+const corsOptions = process.env.NODE_ENV === 'production'
+  ? { origin: true, credentials: true }
   : { origin: 'http://localhost:5173', credentials: true };
 app.use(cors(corsOptions));
 app.use(express.json());

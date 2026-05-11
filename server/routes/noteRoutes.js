@@ -2,18 +2,12 @@ import express from "express";
 const router = express.Router();
 import verifyFirebaseToken from "../verifyFirebaseToken.js";
 import Note from '../models/note.js';
-
-
-
-router.get('/', (req, res) => {
-    res.send('hii');
-});
+import User from '../models/user.js';
 
 router.route('/notes')
     .get(verifyFirebaseToken, async (req, res) => {
         try {
             const userId = req.user.uid; // Firebase UID from verified token
-            const User = (await import('../models/user.js')).default;
             const user = await User.findOne({ firebaseId: userId });
             
             if (!user) {
@@ -32,7 +26,6 @@ router.route('/notes')
             const userId = req.user.uid; // Firebase UID from verified token
 
             // Find or create user by firebaseId
-            const User = (await import('../models/user.js')).default;
             let user = await User.findOne({ firebaseId: userId });
             if (!user) {
                 return res.status(404).json({ message: 'User not found, please sign in again' });
@@ -52,7 +45,6 @@ router.get('/notes/:id', verifyFirebaseToken, async (req, res) => {
     try {
         const noteId = req.params.id;
         const userId = req.user.uid;
-        const User = (await import('../models/user.js')).default;
         const user = await User.findOne({ firebaseId: userId });
         
         if (!user) {
@@ -74,7 +66,6 @@ router.put('/notes/:id', verifyFirebaseToken, async(req,res)=>{
         const noteId = req.params.id;
         const { title, content } = req.body;
         const userId = req.user.uid;
-        const User = (await import('../models/user.js')).default;
         const user = await User.findOne({ firebaseId: userId });
         
         if (!user) {
@@ -99,7 +90,6 @@ router.delete('/notes/:id', verifyFirebaseToken, async(req,res)=>{
     try{
         const noteId = req.params.id;
         const userId = req.user.uid;
-        const User = (await import('../models/user.js')).default;
         const user = await User.findOne({ firebaseId: userId });
         
         if (!user) {
