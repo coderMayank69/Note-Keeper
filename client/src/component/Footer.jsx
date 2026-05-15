@@ -1,10 +1,15 @@
 import React from 'react'
 
 const Footer = () => {
+    const handleReload = (e) => {
+        e.preventDefault()
+        window.location.href = '/'
+    }
+
     return (
         <footer style={{
-            borderTop: '1px solid #e9e9e7',
-            backgroundColor: '#f7f7f5',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            backgroundColor: '#1a1a2e',
             padding: '20px 24px',
         }}>
             <div style={{
@@ -13,23 +18,43 @@ const Footer = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
-                fontSize: '13px',
+                gap: '6px',
+                fontSize: '14px',
                 color: '#9b9a97',
+                flexWrap: 'wrap',
             }}>
-                <span>Designed &amp; Developed by</span>
+                <a
+                    href="/"
+                    onClick={handleReload}
+                    style={{
+                        color: '#ffffff',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                        letterSpacing: '0.3px',
+                        transition: 'opacity 0.15s ease',
+                    }}
+                    onMouseEnter={e => e.target.style.opacity = '0.75'}
+                    onMouseLeave={e => e.target.style.opacity = '1'}
+                >
+                    Note-Keeper
+                </a>
+                <span style={{ color: '#4a4a6a' }}>|</span>
+                <span style={{ color: '#7a7a9a' }}>Designed &amp; Developed by</span>
                 <a
                     href="https://mayank-developer.vercel.app/"
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                        color: '#2383e2',
+                        background: 'linear-gradient(90deg, #a855f7, #ec4899)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
                         fontWeight: 600,
                         textDecoration: 'none',
-                        transition: 'color 0.15s ease',
+                        transition: 'opacity 0.15s ease',
                     }}
-                    onMouseEnter={e => e.target.style.color = '#1a6bc2'}
-                    onMouseLeave={e => e.target.style.color = '#2383e2'}
+                    onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+                    onMouseLeave={e => e.currentTarget.style.opacity = '1'}
                 >
                     Mayank Singh
                 </a>
