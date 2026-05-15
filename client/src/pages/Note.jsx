@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { auth } from '../firebase'
 
 const Loader = () => (
     <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -25,15 +26,22 @@ const Note = () => {
     const [deleteError, setDeleteError] = useState(null);
     const [saveError, setSaveError] = useState(null);
 
+    // Helper: always get a fresh, non-expired Firebase token
+    const getFreshToken = async () => {
+        const user = auth.currentUser;
+        if (!user) return null;
+        try { return await user.getIdToken(false); } catch { return null; }
+    };
+
     useEffect(() => {
-        const token = localStorage.getItem('firebaseToken');
-        if (!token) navigate('/');
+        if (!auth.currentUser && !localStorage.getItem('firebaseToken')) navigate('/');
     }, [navigate]);
 
     useEffect(() => {
         const fetchNote = async () => {
             try {
-                const token = localStorage.getItem('firebaseToken');
+                const token = await getFreshToken();
+                if (!token) { setError('Session expired. Please sign in again.'); setLoading(false); navigate('/'); return; }
                 const response = await fetch(`/api/notes/${id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -54,7 +62,8 @@ const Note = () => {
         if (!window.confirm('Are you sure you want to delete this note?')) return;
         setDeleteError(null);
         try {
-            const token = localStorage.getItem('firebaseToken');
+            const token = await getFreshToken();
+            if (!token) { setDeleteError('Session expired. Please sign in again.'); return; }
             const res = await fetch(`/api/notes/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -74,7 +83,8 @@ const Note = () => {
         e.preventDefault();
         setSaveError(null);
         try {
-            const token = localStorage.getItem('firebaseToken');
+            const token = await getFreshToken();
+            if (!token) { setSaveError('Session expired. Please sign in again.'); return; }
             const response = await fetch(`/api/notes/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

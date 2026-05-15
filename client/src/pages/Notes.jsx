@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { auth } from '../firebase'
 
 const Loader = () => (
     <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -37,15 +38,26 @@ const Notes = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
 
+    // Helper: always get a fresh, non-expired token from Firebase
+    const getFreshToken = async () => {
+        const user = auth.currentUser;
+        if (!user) return null;
+        try {
+            return await user.getIdToken(/* forceRefresh */ false);
+        } catch {
+            return null;
+        }
+    };
+
     useEffect(() => {
         const token = localStorage.getItem('firebaseToken');
-        if (!token) navigate('/');
+        if (!token && !auth.currentUser) navigate('/');
     }, [navigate]);
 
     const fetchNotes = async () => {
         try {
-            const token = localStorage.getItem('firebaseToken');
-            if (!token) { setError("Please sign in to view notes"); setLoading(false); return; }
+            const token = await getFreshToken();
+            if (!token) { setError("Please sign in to view notes"); setLoading(false); navigate('/'); return; }
             const response = await fetch("/api/notes", {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -65,7 +77,8 @@ const Notes = () => {
         e.preventDefault();
         setAddError(null);
         try {
-            const token = localStorage.getItem('firebaseToken');
+            const token = await getFreshToken();
+            if (!token) { setAddError('Session expired. Please sign in again.'); return; }
             const response = await fetch("/api/notes", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
